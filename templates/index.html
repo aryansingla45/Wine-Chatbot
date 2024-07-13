@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .chat-container {
+            display: none;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 80%;
+            width: 25%;
+            background-color: white;
+            border-left: 1px solid #ccc;
+            box-shadow: -2px 0 12px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            box-sizing: border-box;
+            z-index: 999; /* Ensure it's above other content except the button */
+        }
+
+        #chatbox {
+            height: calc(100% - 70px); /* Adjust for input and button */
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #userInput {
+            width: calc(70% - 20px); /* Adjust for padding */
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+    <title>Chatbot</title>
+</head>
+<body>
+    <div class="chatbot-button" onclick="toggleChatbot()">💬</div>
+    <div class="chat-container" id="chatContainer">
+        <div id="chatbox"></div>
+        <input type="text" id="userInput" placeholder="Type your message here...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        function toggleChatbot() {
+            var chatContainer = document.getElementById("chatContainer");
+            if (chatContainer.style.display === "none" || chatContainer.style.display === "") {
+                chatContainer.style.display = "block";
+            } else {
+                chatContainer.style.display = "none";
+            }
+        }
+
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            var chatbox = document.getElementById("chatbox");
+
+            var userMessageDiv = document.createElement("div");
+            userMessageDiv.className = "user-message";
+            userMessageDiv.textContent = "You: " + userInput;
+            chatbox.appendChild(userMessageDiv);
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var botMessageDiv = document.createElement("div");
+                botMessageDiv.className = "bot-message";
+                botMessageDiv.textContent = "Bot: " + data.response;
+                chatbox.appendChild(botMessageDiv);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+</body>
+</html>
