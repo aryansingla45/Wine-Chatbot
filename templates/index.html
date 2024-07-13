@@ -48,6 +48,24 @@
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .message-box {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .user-message {
+            background-color: #e1f5fe;
+            text-align: right;
+        }
+
+        .bot-message {
+            background-color: #eeeeee;
+            text-align: left;
         }
 
         #userInput {
@@ -67,7 +85,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        
+
         button:hover {
             background-color: darkblue;
         }
@@ -95,8 +113,12 @@
             var userInput = document.getElementById("userInput").value;
             var chatbox = document.getElementById("chatbox");
 
+            if (userInput.trim() === "") {
+                return;
+            }
+
             var userMessageDiv = document.createElement("div");
-            userMessageDiv.className = "user-message";
+            userMessageDiv.className = "message-box user-message";
             userMessageDiv.textContent = "You: " + userInput;
             chatbox.appendChild(userMessageDiv);
 
@@ -110,7 +132,7 @@
             .then(response => response.json())
             .then(data => {
                 var botMessageDiv = document.createElement("div");
-                botMessageDiv.className = "bot-message";
+                botMessageDiv.className = "message-box bot-message";
                 botMessageDiv.textContent = "Bot: " + data.response;
                 chatbox.appendChild(botMessageDiv);
                 chatbox.scrollTop = chatbox.scrollHeight;
